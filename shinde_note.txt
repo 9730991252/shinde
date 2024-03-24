@@ -19,7 +19,7 @@ source venv/bin/activate
 pip install django
 
 pip install pillow
- pip install django-ckeditor
+pip install django-ckeditor
 
 
 ******** Install Gunicorn ******
@@ -39,15 +39,15 @@ Example:- sudo nano /etc/systemd/system/crenta.in.gunicorn.socket
 
 cd  /etc/systemd/system/
 
-sudo nano shinde.gunicorn.socket
+sudo nano narayaniorder.com.gunicorn.socket
 
 
 
 [Unit]
-Description=shinde.gunicorn socket
+Description=narayaniorder.com.gunicorn socket
 
 [Socket]
-ListenStream=/run/shinde.gunicorn.sock
+ListenStream=/run/narayaniorder.com.gunicorn.sock
 
 [Install]
 WantedBy=sockets.target
@@ -56,16 +56,16 @@ WantedBy=sockets.target
 
 ************** Create System Service File for Gunicorn ******
 Syntax:- sudo nano /etc/systemd/system/your_domain.gunicorn.service
-Example:- sudo nano /etc/systemd/system/crenta.in.gunicorn.service
+Example:- sudo nano /etc/systemd/system/narayaniorder.com.gunicorn.service
 
 cd  /etc/systemd/system/
 
-sudo nano shinde.gunicorn.service
+sudo nano narayaniorder.com.gunicorn.service
 
 
 [Unit]
-Description=shinde.gunicorn daemon
-Requires=shinde.gunicorn.socket
+Description=narayaniorder.com.gunicorn daemon
+Requires=narayaniorder.com.gunicorn.socket
 After=network.target
 
 [Service]
@@ -75,37 +75,37 @@ WorkingDirectory=/root/shinde
 ExecStart=/root/shinde/venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
-          --bind unix:/run/shinde.gunicorn.sock \
+          --bind unix:/run/narayaniorder.com.gunicorn.sock \
           shinde.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
 
 ----------------------------------------------------------------
-sudo systemctl start shinde.gunicorn.socket
+sudo systemctl start narayaniorder.com.gunicorn.socket
 
-sudo systemctl start shinde.gunicorn.service
+sudo systemctl start narayaniorder.com.gunicorn.service
 
 -----------------------------------------------------------------
 
 
 
-sudo systemctl enable shinde.gunicorn.socket
+sudo systemctl enable narayaniorder.com.gunicorn.socket
 
-sudo systemctl enable shinde.gunicorn.service
+sudo systemctl enable narayaniorder.com.gunicorn.service
 
 -----------------------------------------------------------------------
 
 
-sudo systemctl status shinde.gunicorn.socket
+sudo systemctl status narayaniorder.com.gunicorn.socket
 
-sudo systemctl status shinde.gunicorn.service
+sudo systemctl status narayaniorder.com.gunicorn.service
 
 -------------------------------------------
 
 sudo systemctl daemon-reload
 
-sudo systemctl restart shinde.gunicorn
+sudo systemctl restart narayaniorder.com.gunicorn
 
 --------------------------------
 
@@ -117,7 +117,7 @@ Example:- sudo nano /etc/nginx/sites-available/crenta.in
 
 cd /etc/nginx/sites-available
 
-sudo nano shinde
+sudo nano narayaniorder.com
 
 
 
@@ -125,8 +125,8 @@ server{
     listen 80;
     listen [::]:80;
 
-    server_name narayani.tejorder.com www.narayani.tejorder.com;
-    client_max_body_size 200M;
+    server_name narayaniorder.com www.narayaniorder.com;
+    client_max_body_size 500M;
 
     location = /favicon.ico { access_log off; log_not_found off; }
 
@@ -135,7 +135,7 @@ server{
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_pass http://unix:/run/shinde.gunicorn.sock;
+        proxy_pass http://unix:/run/narayaniorder.com.gunicorn.sock;
     }
 
     
@@ -146,7 +146,7 @@ server{
 
 ########## Enable Virtual Host or Create Symbolic Link of Virtual Host File ########
 
-sudo ln -s /etc/nginx/sites-available/shinde /etc/nginx/sites-enabled/shinde
+sudo ln -s /etc/nginx/sites-available/narayaniorder.com /etc/nginx/sites-enabled/narayaniorder.com
 
 
 %%%%%%%%%%%%%%%%%%%%% Check Configuration is Correct or Not %%%%%
@@ -164,7 +164,7 @@ sudo service nginx restart
 
 sudo systemctl daemon-reload
 
-sudo systemctl restart shinde.gunicorn
+sudo systemctl restart narayaniorder.com.gunicorn
 
 
 
