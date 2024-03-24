@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+.cat{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    
+}
+</style>
+
+
+<div class="container">
+    <h6>welcome {{a.admin_name}} </h6>
+
+    <input type="hidden" id="seller_id" value="{{s.id}}"></input>
+    {% include 'admin/admin_menu.html' %} 
+</div>
+<h6 class="text-center my-3">Seller Select Category </h6>
+<div class="container border my-3">
+
+
+<div><h3 class="text-center my-3">{{s.shope_name}}</h3></div>
+<div><h6 class="text-center my-3">{{s.seller_name}}</h6></div>
+<div><h6 class="text-center my-3">{{s.shop_address}}</h6></div>
+<div><h6 class="text-center my-3">{{s.seller_mobile}}</h6></div>
+
+<h6 class="text-center my-3">Select Category The Following </h6>
+
+<div class="cat my-1" >
+
+    {% for c in c %}
+    <div>
+        <form class="" method="POST">{% csrf_token %}
+            <input style="display: none;" type="checkbox" id="ch_box{{c.id}}" > </input>
+            <input type="hidden" name="category_id" value="{{c.id}}">
+    <button id="chang{{c.id}}" name="Select" class="btn btn-danger my-2 mx-2">{{c.category_name}}</button>
+</form>
+  </div>
+    {% endfor %}
+    </div>
+  
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+var seller_id = document.getElementById('seller_id').value;
+//console.log(seller_id)
+select_seller_cat(seller_id)   
+    
+function select_seller_cat(sid){
+
+    $.ajax({
+        url:"{% url 'select_seller_cat' %}",
+        method: "GET",
+        data:{
+            seller_id:seller_id
+        },
+        success: function(data){
+            s=(data.sl)
+            
+            console.log(s)
+            for (var key=0; key<data.sl.length; key++){
+                ci=(data.sl[key].category_id)
+                document.getElementById('chang'+ci).className="btn btn-success my-2 mx-2";
+                document.getElementById('ch_box'+ci).checked=true;
+                document.getElementById('ch_box'+ci).style.display=''
+                
+            } 
+        },
+    })
+}
+</script>
+
+
+
+{% endblock script %}

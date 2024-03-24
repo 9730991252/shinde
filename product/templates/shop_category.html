@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h6>welcome {{a.admin_name}} </h6>
+    {% include 'admin/admin_menu.html' %} 
+</div>
+<div class="container mt-3 p-3 border rounded">
+ 
+
+	
+	{% if messages %}
+	
+	{% for message in messages %}
+	<div class="alert alert-success text-center mb-3">{{message}}</div>
+	{% endfor %}
+	{% endif %}
+
+	<div class="row">
+		<div class="col-6"><a href=""  data-bs-toggle="modal" data-bs-target="#Add_Category_Modal" class="btn btn-success" >Add Category</a></div>
+		
+	</div>
+
+
+
+<table class="table">
+<thead>
+  <tr>
+	<th scope="col">Number</th>
+	<th scope="col">Name</th>
+	<th scope="col">Added By</th>
+	<th scope="col">Status</th>
+	<th scope="col">Edit</th>
+	<th scope="col">Delete</th>
+  </tr>
+</thead>
+<tbody>{% for dc in dc %}
+  <tr>
+	<th scope="row">{{forloop.counter}}</th>
+	<td>{{dc.category_name}}</td>
+	<td>{{dc.added_by.admin_name}}</td>
+	<td><form class="" method="POST">{% csrf_token %}{% if dc.status == 1 %}<button class="btn btn-success" type="submit" name="Active">Active<input type="hidden" name="id" value="{{dc.id}}"></button>{% else %}<button class="btn btn-danger" type="submit" name="Deactive">Deactive<input type="hidden" name="id" value="{{dc.id}}"></button>{% endif %}</form></td>
+	<td><a href="" class="text-bg-info p-2"data-bs-toggle="modal" data-bs-target="#Edit_Dish_Category_Modal_{{dc.id}}" >Edit</a></td>
+	<td><a href="" class="text-bg-danger p-2" data-bs-toggle="modal" data-bs-target="#Delete_Dish_Category_Modal_{{dc.id}}" >X</a></td>
+  </tr>
+
+  
+<!-- Edit Category Modal -->
+<form action="" method="POST">
+{% csrf_token %}
+<div class="modal fade" id="Edit_Dish_Category_Modal_{{dc.id}}" tabindex="-1" aria-labelledby="Edit_Dish_Category_Modal_{{dc.id}}" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h1 class="modal-title fs-5" id="Edit_Dish_Category_Modal_{{dc.id}}">Edit Category</h1>
+		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+		  <div class="">
+			<input type="hidden" name="id" value="{{dc.id}}">
+			<label for="name">Category Name</label>
+			<input value="{{dc.category_name}}" type="text" name="name" id="name" class="form-control" required>
+		  </div>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		  <button type="submit" class="btn btn-primary" name="Edit">Submit</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+</form>
+
+
+
+  
+<!-- Delete Category Modal -->
+<form action="" method="POST">
+{% csrf_token %}
+<div class="modal fade" id="Delete_Dish_Category_Modal_{{dc.id}}" tabindex="-1" aria-labelledby="Delete_Dish_Category_Modal_{{dc.id}}" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-body">
+		<input type="hidden" name="id" value="{{dc.id}}">
+		  <p> Are you sure ? You want to Delete</p>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		  <button type="submit" class="btn btn-primary" name="Delete">Delete</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+</form>
+
+
+  {% endfor %}
+</tbody>
+
+</table>
+
+
+<!-- Add Category Modal -->
+<form action="" method="POST">
+{% csrf_token %}
+<div class="modal fade" id="Add_Category_Modal" tabindex="-1" aria-labelledby="Add_Category_Modal" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h1 class="modal-title fs-5" id="Add_Category_Modal">Add New Category</h1>
+		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+		  <div class="">
+			<input type="hidden" name="admin_id" value="{{a.id}}">
+			<label for="name">Category Name</label>
+			<input type="text" name="name" id="name" class="form-control" required>
+		  </div>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		  <button type="submit" class="btn btn-primary" name="Add">Submit</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+</form>
+</div>
+
+
+
+
+
+{% endblock content %}

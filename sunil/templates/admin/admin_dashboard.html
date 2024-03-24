@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %} Admin Dashboard{% endblock title %}
+{% block content %}
+<div class="container">
+    <div class=""><h>Welcome - {{a.admin_name}}</h></div>
+</div>
+
+<div class="container my-3">
+  {% include 'admin/admin_menu.html' %}  
+</div>
+
+{% endblock content %}

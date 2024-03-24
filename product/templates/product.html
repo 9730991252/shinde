@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h6>welcome {{a.admin_name}} </h6>
+    {% include 'admin/admin_menu.html' %} 
+</div>
+<div class="container mt-3 p-3 border rounded">
+ 
+
+	
+	{% if messages %}
+	
+	{% for message in messages %}
+	<div class="alert alert-success text-center mb-3">{{message}}</div>
+	{% endfor %}
+	{% endif %}
+
+
+
+<table class="table">
+	<thead>
+	  <tr>
+		<th scope="col">#</th>
+		<th scope="col">Images</th>
+		<th scope="col">Product Name</th>
+		<th scope="col">Price </th>
+		<th scope="col">Discount </th>
+		<th scope="col">Select Category </th>
+		<th scope="col">Status</th>
+		<th scope="col">Edit</th>
+		<th scope="col" style="display: none;">Delete</th>
+	  </tr>
+	</thead>
+	<tbody>{% for p in d %}
+	  <tr>
+		<td>{{forloop.counter}}</td>
+		<td>{% if p.image.url != '' %}<img src='{{p.image.url}}' alt="" height="60px" >{% endif %}</td>
+		<td>{{p.product_name}}</td>
+		<td>{{p.price}}</td>
+		<td>{{p.discount}}</td>
+		<td><a href="/product/product_select_category/{{p.id}}" class="btn btn-info p-2" >Select Category</a></td>
+		<td><form class="" method="POST">{% csrf_token %}{% if p.status == 1 %}<button class="btn btn-success" type="submit" name="Active">Active<input type="hidden" name="id" value="{{p.id}}"></button>{% else %}<button class="btn btn-danger" type="submit" name="Deactive">Deactive<input type="hidden" name="id" value="{{p.id}}"></button>{% endif %}</form></td>
+		<td><a href="/product/edit_product/{{p.id}}" class="text-bg-info p-2" >Edit</a></td>
+		<td style="display: none;"><a href="" class="text-bg-danger p-2" data-bs-toggle="modal" data-bs-target="#Delete_Product_Modal_{{p.id}}" >X</a></td>
+	  </tr>
+
+
+
+
+
+	  
+<!-- Delete Category Modal -->
+<form action="" method="POST">
+	{% csrf_token %}
+	<div class="modal fade" id="Delete_Product_Modal_{{p.id}}" tabindex="-1" aria-labelledby="Delete_Dish_Product_Modal_{{p.id}}" aria-hidden="true">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			<div class="modal-body">
+			<input type="hidden" name="product_id" value="{{p.id}}">
+			  <p> Are you sure ? You want to Delete</p>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			  <button type="submit" class="btn btn-primary" name="Delete">Delete</button>
+			</div>
+		  </div>
+		</div>
+	  </div>
+</form>
+
+
+	  {% endfor %}
+	</tbody>
+	
+  </table>
+
+
+
+</div>
+{% endblock content %}

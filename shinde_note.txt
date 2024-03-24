@@ -1,0 +1,170 @@
+142.93.213.54
+
+%%%%%%% git clone %%%%%%%%%%%
+
+
+********** Create Virtual env *****
+
+virtualenv venv
+
+
+********** Activate Virtual env ****
+
+source venv/bin/activate
+
+
+
+***** install django ******
+
+pip install django
+
+pip install pillow
+ pip install django-ckeditor
+
+
+******** Install Gunicorn ******
+ 
+pip install gunicorn
+
+
+*********** Deactivate Virtualenv *****
+
+deactivate
+
+
+
+************ Create System Socket File for Gunicorn *******
+
+Example:- sudo nano /etc/systemd/system/crenta.in.gunicorn.socket
+
+cd  /etc/systemd/system/
+
+sudo nano shinde.gunicorn.socket
+
+
+
+[Unit]
+Description=shinde.gunicorn socket
+
+[Socket]
+ListenStream=/run/shinde.gunicorn.sock
+
+[Install]
+WantedBy=sockets.target
+
+
+
+************** Create System Service File for Gunicorn ******
+Syntax:- sudo nano /etc/systemd/system/your_domain.gunicorn.service
+Example:- sudo nano /etc/systemd/system/crenta.in.gunicorn.service
+
+cd  /etc/systemd/system/
+
+sudo nano shinde.gunicorn.service
+
+
+[Unit]
+Description=shinde.gunicorn daemon
+Requires=shinde.gunicorn.socket
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/root/shinde
+ExecStart=/root/shinde/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/shinde.gunicorn.sock \
+          shinde.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+----------------------------------------------------------------
+sudo systemctl start shinde.gunicorn.socket
+
+sudo systemctl start shinde.gunicorn.service
+
+-----------------------------------------------------------------
+
+
+
+sudo systemctl enable shinde.gunicorn.socket
+
+sudo systemctl enable shinde.gunicorn.service
+
+-----------------------------------------------------------------------
+
+
+sudo systemctl status shinde.gunicorn.socket
+
+sudo systemctl status shinde.gunicorn.service
+
+-------------------------------------------
+
+sudo systemctl daemon-reload
+
+sudo systemctl restart shinde.gunicorn
+
+--------------------------------
+
+
+****************** Create Virtual Host File ******
+Syntax:- sudo nano /etc/nginx/sites-available/your_domain
+Example:- sudo nano /etc/nginx/sites-available/crenta.in
+
+
+cd /etc/nginx/sites-available
+
+sudo nano shinde
+
+
+
+server{
+    listen 80;
+    listen [::]:80;
+
+    server_name narayani.tejorder.com www.narayani.tejorder.com;
+    client_max_body_size 200M;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://unix:/run/shinde.gunicorn.sock;
+    }
+
+    
+}
+
+-----------------------------------------------------
+
+
+########## Enable Virtual Host or Create Symbolic Link of Virtual Host File ########
+
+sudo ln -s /etc/nginx/sites-available/shinde /etc/nginx/sites-enabled/shinde
+
+
+%%%%%%%%%%%%%%%%%%%%% Check Configuration is Correct or Not %%%%%
+
+sudo nginx -t
+
+
+%%%%%%%%%%%% Restart Nginx %%%%%%%%%
+
+sudo service nginx restart
+-------------------------------------
+
+
+********** restart ******
+
+sudo systemctl daemon-reload
+
+sudo systemctl restart shinde.gunicorn
+
+
+

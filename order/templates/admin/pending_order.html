@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %} Pending Order {% endblock title %}
+{% block content %}
+<style>
+*{margin: 0; padding: 0; 
+    box-sizing: border-box;}
+    body{
+      height: 100vh;
+      width: 100vw;
+    }
+    .list_head{
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr;
+    border-bottom: 1px solid rgb(155, 150, 150);
+    padding: 20px;
+  }  
+
+
+  .list_iteam{
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr;
+    border-bottom: 1px solid rgb(155, 150, 150); 
+    column-gap: 20px;
+    padding: 20px;
+  }
+
+</style>
+
+<div class="container">
+    <div class=""><h>Welcome - {{a.admin_name}}</h></div>
+</div>
+
+<div class="container my-3">
+  {% include 'admin/admin_menu.html' %}  
+</div>
+<h6 class="text-center"> Pending Order List </h6>
+<div class="border">
+<div class="list_head">
+    <strong>Order</strong>
+    <strong>Name</strong>
+    <strong>Total</strong>
+    <strong>Status</strong>
+    </div>
+{% for p in pending_order %}
+    <div class="list_iteam">
+        <div><strong>{{p.order_filter}}</strong></div>
+        <div>{{p.customer.name}}</div>
+        <div>{{p.total_amount}}</div>
+        <div ><a href="/order/view_pending_order/{{p.order_filter}}/" class="text-bg-danger p-1" style="border-radius: 10px;">{{p.status}}</a></div>
+    </div>
+    {% endfor %}
+</div>
+
+
+</div>
+
+{% endblock content %}

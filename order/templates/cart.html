@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load discount_tag %}
+{% include 'index_navbar.html' %}  
+<style>
+  *{margin: 0; padding: 0; 
+    box-sizing: border-box;}
+    body{
+      height: 100vh;
+      width: 100vw;
+    }
+  .list_head{
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 0.50fr 1fr 0.50fr;
+    border-bottom: 1px solid rgb(155, 150, 150);
+    padding: 20px;
+  }  
+
+  .list_iteam{
+    display: grid;
+    grid-template-columns: 2fr 1fr 0.50fr 1fr 0.50fr;
+    border-bottom: 1px solid rgb(155, 150, 150); 
+    column-gap: 20px;
+    padding: 20px;
+  }
+  .address_box{
+    border: 1px solid rgb(138, 134, 134);
+    padding: 25px;
+  }
+
+
+</style>
+<h>Shopping Cart</h>
+<div class="list_head">
+<strong>Iteam Name</strong>
+<strong>Price</strong>
+<strong>Qty</strong>
+<strong>Total</strong>
+<strong>Action</strong>
+</div>
+{% for p in cp %}
+<div class="list_iteam">
+<div><strong>{{p.product.product_name}}</strong><strong class="text-success">&nbsp;{% call_current_discount p.product_id %}%  Off </strong></div>
+<div> {% call_current_sellprice p.product_id %} <del>{% call_current_price p.product_id %}</del></div>
+<div>{{p.qty}}</div>
+<div>{% call_total_price p.product_id p.qty %}</div>
+<div><form><input type="hidden" name="cart_id" value="{{p.id}}"><button type="submit" class="btn btn-danger" name="Remove">X</button></form></div>
+</div>
+{% endfor %}
+<h6 class="mt-3">Total Amount {% call_total_amount cm.id %}</h6>
+
+<h6 class="mt-5 text-center" >Delivery Address Information</h6>
+
+<div class="address_box">
+<form action="" method="POST">{% csrf_token %}
+  <div class="mb-3">
+    <label for="name" class="form-label">Full Name</label>
+    <input type="text" class="form-control" id="name" name="name" {% if cm.name == None %}{% else %} value="{{cm.name}}"{% endif %} required>
+  </div>
+
+  <div class="mb-3">
+    <label for="name" class="form-label">Pin Code</label>
+    <input type="number" class="form-control" id="name" name="pin_code" placeholder="6 Digit Pincode" {% if cm.pin_code == None %}{% else %} value="{{cm.pin_code}}"{% endif %} required>
+  </div>
+  
+  <div class="mb-3">
+    <label for="name" class="form-label">Flat, House no., Building, Company, Apartment </label>
+    <input type="text" class="form-control" id="name" name="house_no" {% if cm.house_no == None %}{% else %} value="{{cm.house_no}}"{% endif %} required>
+  </div>
+
+
+  <div class="mb-3">
+    <label for="name" class="form-label">Area, Street, Sector, Village </label>
+    <input type="text" class="form-control" id="name" name="post" {% if cm.post == None %}{% else %} value="{{cm.post}}"{% endif %} required>
+  </div>
+
+  <div class="mb-3">
+    <label for="name" class="form-label">Landmark </label>
+    <input type="text" class="form-control" id="name" name="landmark" {% if cm.landmark == None %}{% else %} value="{{cm.landmark}}"{% endif %} required>
+  </div>
+
+  <div class="mb-3">
+    <label for="name" class="form-label">Taluka </label>
+    <input type="text" class="form-control" id="name" name="taluka" {% if cm.taluka == None %}{% else %} value="{{cm.taluka}}"{% endif %} required>
+  </div>
+
+  <div class="mb-3">
+    <label for="name" class="form-label">District </label>
+    <input type="text" class="form-control" id="name" name="district" {% if cm.district == None %}{% else %} value="{{cm.district}}"{% endif %} required>
+  </div>
+  <button type="submit" name="Add_address" class="btn btn-warning">Place Order</button>
+</form>
+</div>
+{% endblock content %}

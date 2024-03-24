@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load discount_tag %}
+
+{% include 'index_navbar.html' %}  
+<style>
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  height: 100%;
+  width: 100%;
+}
+a{
+  text-decoration: none;
+}
+.iteam_container{
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+
+.iteam_box_body{
+  box-shadow: 2px 2px 10px  black;
+  border-radius: 10px;
+  padding: 5px;
+  width: 300px;
+  height: 600px;
+  margin-top: 30px;
+  
+}
+
+
+.iteam_image img
+{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.iteam_title{
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  font-size: 1.7rem;
+  text-align: center;
+}
+
+.iteam_decription{
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+
+  
+}
+.iteam_price{
+  display: flex;
+  justify-content: center;
+  
+}
+.iteam_footer{
+    margin-top: 25px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 3fr;
+    padding: 10px;
+    text-align: center;
+}
+
+.iteam_footer input{
+  width: 80%;
+}
+
+.cat{
+  display: flex;
+}
+
+
+.more_btn{
+  background-color: rgb(7, 58, 243);
+  padding: 5px;
+  border-radius: 10px;
+  color: azure;
+  
+}
+
+
+@media only screen and (min-width: 200px) and (max-width: 567px){
+  .iteam_box_body{
+    width: 100%;
+    height: 100%;
+  
+
+  }
+
+
+  .iteam_decription{
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+
+  
+}
+
+  .iteam_container{
+    display: grid;
+  grid-template-columns: auto ;
+  gap: 20px;
+  }
+  
+
+  .cat{
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 10px;
+    column-gap: 0px;
+    margin-left: 0px;
+  }}
+
+
+</style>
+<div class="cat my-5">
+  {% for c in c %}
+  <div class="">
+  <form class="" method="POST">{% csrf_token %}
+    <input type="hidden" name="cid" value="{{c.id}}">
+  <button type="submit" name="Search" class="btn btn-success my-2 mx-2" >{{c.category_name}}</button>
+  </form>
+</div>
+  {% endfor %}
+  </div>
+  
+<div class="cat my-5">
+  {% for c in sub %}
+  <div class="">
+
+  <a  class="btn btn-primary my-2 mx-2" onclick="filter_product('{{c.id}}')">{{c.sub_category_name}}</a>
+
+</div>
+  {% endfor %}
+  </div>
+
+
+<div class="iteam_container">
+
+<div id="product_result"></div>
+
+</div>
+
+{% include 'footer.html' %}
+
+
+{% endblock content %}
+
+
+{% block script %}
+<script>
+
+
+  //fiter filter_product code
+  function filter_product(id){
+$.ajax({
+  url: "{% url 'filter_product' %}",
+  method: "GET",
+  data:{
+      sub_category_id:id
+    },
+    success: function(data){
+      $('#product_result').empty();
+      
+      for (var key=0; key<data.p.length; key++){
+        price=(data.p[key].price)
+        discount=(data.p[key].discount)
+        if ( discount == null ){
+          discount =0
+        }
+        sellprice=price-(price*discount/100)
+        
+        var temp=`<div class="iteam_box_body">
+      <div class="iteam_header">
+        <a href="#" class="iteam_image">
+          <img src="${data.p[key].image}" alt="" >
+        </a>
+        <div class="iteam_title">
+          <h4>${data.p[key].product_name}</h4> 
+        </div>
+        <div class="iteam_decription">
+          <a href="/product_detail/${data.p[key].id}" class="more_btn">More Information </a>
+        </div>
+        <div class="iteam_price">
+          <div><h6>Rs ${sellprice}</h6></div>
+          <div>&nbsp;&nbsp;<del>${data.p[key].price}</del></div>
+          <div> &nbsp;&nbsp; &nbsp;&nbsp;<strong class="text-success">${discount}% Off</strong></div>
+        </div>
+      
+        <div class="iteam_footer">
+          <div ><button type="button" onclick="minus('${data.p[key].id}')" class="btn btn-success px-3">-</button></div>
+          <div ><strong  id="qty${data.p[key].id}"  >1</strong></div>
+          <div><button type="button" onclick="plus('${data.p[key].id}')" class="btn btn-success px-3" >+</button></div>
+          <div><button type="button" class="btn btn-danger mx-auto" onclick="add_to_cart('${data.p[key].id}')">Add To Cart </button></div>
+        </div>
+            
+      </div>
+      <div id="numb{{p.id}}" class="text-center"></div> 
+    </div>
+    
+        `
+$('#product_result').append(temp);
+      }
+    }
+})
+  }
+
+
+
+//pus btn
+function plus(id){
+    var qty = document.getElementById('qty'+id).innerHTML;
+    //alert(qty)
+    if(qty < 50){
+      qty++;
+    document.getElementById('qty'+id).innerHTML=qty;
+    //p=qty*price
+    //document.getElementById('set_prc'+id).innerText=p;
+    }
+      }
+
+
+  //minus btn
+function minus(id){
+    var qty = document.getElementById('qty'+id).innerHTML;
+    //alert(qty)
+    if(qty > 1){
+      qty--;
+    document.getElementById('qty'+id).innerHTML=qty;
+    //p=qty*price
+    //document.getElementById('set_prc'+id).innerText=p;
+    }
+      }
+function add_to_cart(id){
+  var qty = document.getElementById('qty'+id).innerHTML;
+  $.ajax({
+    url: "{% url 'add_to_cart' %}",
+    method: "GET",
+    data:{
+        pid:id,
+        qty:qty
+    },
+    success: function(data){
+      ng=(data.ng)
+        document.getElementById('all_qty').innerHTML=ng
+      if (data.status == 0){
+        temp=`
+        <h6>Enter Delivery Information </h6>
+        
+        
+        <input type="number" id="mon${id}" class="form-control" placeholder="Enter Mobile Number " >
+        <a  class="btn btn-warning mt-2" onclick=customer_mobile(${id})>Place Order </a>
+        `
+        document.getElementById('numb'+id).innerHTML=temp
+        
+      }cart_btn()
+    }
+  })
+}
+
+
+
+function customer_mobile(pid){
+  var mobile = document.getElementById('mon'+pid).value;
+  var qty = document.getElementById('qty'+pid).innerHTML;
+    if (mobile=='' | mobile.length > 10 | mobile.length < 10){
+    document.getElementById('mon'+pid).style.borderColor ='red';return false;
+  }
+
+
+  $.ajax({
+    url: "{% url 'customer_mobile' %}",
+    method: "GET",
+    data:{
+        pid:pid,
+        mobile:mobile,
+        qty:qty
+    },
+    success: function(data){
+  window.location.reload()
+    }
+  })
+}
+cart_btn()
+function cart_btn(){
+  ng=document.getElementById('all_qty').innerHTML
+if(ng != 0){
+  document.getElementById('cart_btn').style.display='';
+}
+
+}
+
+
+
+</script>
+
+{% endblock script %}

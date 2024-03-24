@@ -1,0 +1,48 @@
+<style>
+    *{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  height: 100%;
+  width: 100%;
+}
+
+footer{
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: rgb(233, 227, 227);
+    text-align: center;
+    }
+    .footer_iteam{
+      display: grid;
+      grid-template-columns: auto auto auto;
+      
+     
+    }
+
+    @media only screen and (min-width: 200px) and (max-width: 567px){
+        .footer{
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+</style>
+
+
+<footer>
+    <div class="footer_iteam">
+      <h6 class="pt-1">Welcome <strong class="badge bg-danger"></strong></h6>
+      <h6 class="pt-1">Total Qty <strong id="all_qty"  class="badge bg-danger">{{ng}}</strong></h6>
+     <div ><a href="/order/cart/" style="display: none;" type="button" id="cart_btn"  class="btn btn-warning">Place Order</a></div>
+    
+    </div>
+  
+  </footer>

@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+.cat{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    
+}
+.sub_cat{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    
+}
+</style>
+
+
+<div class="container">
+    <h6>welcome {{s.seller_name}} </h6>
+
+    <input type="hidden" id="product_i" value="{{p.id}}"></input>
+    {% include 'seller/seller_menu.html' %} 
+</div>
+<h6 class="text-center my-3">Product Select Category </h6>
+<div class="container border my-3">
+
+<div class="text-center">
+<img src='{{p.image.url}}' alt="" height="200px" >
+</div>
+<div><h3 class="text-center my-3">{{p.product_name}}</h3></div>
+
+<h6 class="text-center my-3">Select Category The Following </h6>
+
+<div class="cat my-1" >
+    
+    {% for c in c %}
+    <div>
+        <form class="" method="POST">{% csrf_token %}
+            <input type="hidden" name="category_id" value="{{c.id}}">
+            <button name="Search" class="btn btn-danger my-2 mx-2">{{c.category_name}}</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+<h6 class="text-center my-3">Select Sub Category</h6>
+<div class="border sub_cat" >
+    
+    {% for c in sub_c %}
+    <div >
+        <form class="" method="POST">{% csrf_token %}
+           <input style="display: none;" type="checkbox" id="ch_box{{c.id}}" > </input>
+            <input  type="hidden" name="sub_category_id" value="{{c.id}}">
+    <button name="Select" id="chang{{c.id}}" class="btn btn-danger my-2 mx-2">{{c.sub_category_name}}</button>
+</form>
+  </div>
+  {% endfor %}
+  <div>
+      <div class="m-3"><a href=""  data-bs-toggle="modal" data-bs-target="#Add_Category_Modal" class="btn btn-info" >Add New Category </a></div>
+  </div>
+    </div>
+
+
+
+  
+</div>
+
+
+
+
+
+
+
+
+<!-- Add Category Modal -->
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="Add_Category_Modal" tabindex="-1" aria-labelledby="Add_Category_Modal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="Add_Category_Modal">Add New Sub Category </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+              <div class="mb-3">
+                <label for="sub_category_name">Sub Category Name </label>
+                <input type="text" name="sub_category_name" id="sub_category_name" class="form-control" required>
+              </div>
+
+
+
+              <div class="mb-3">
+                  
+                <select id="department" class="form-control" name="main_cat_id" required>
+                  <option value="">Select Category</option>
+                  {% for c in c %}
+                <option value="{{c.id}}">{{c.category_name}}</option>
+                {% endfor %}
+              </select>
+            
+               </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary" name="Add">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    </div>
+    
+    
+
+
+
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+
+
+
+
+
+
+var pid = document.getElementById('product_i').value;
+console.log(pid)
+select_prd_cat(pid)   
+    
+function select_prd_cat(pid){
+
+    $.ajax({
+        url:"{% url 'select_prd_cat' %}",
+        method: "GET",
+        data:{
+            pid:pid
+        },
+        success: function(data){
+            s=(data.sl)
+            
+            //console.log(s)
+            for (var key=0; key<data.sl.length; key++){
+                ci=(data.sl[key].sub_category_id)
+      
+                document.getElementById('chang'+ci).className="btn btn-success my-2 mx-2";
+                document.getElementById('ch_box'+ci).checked=true;
+                document.getElementById('ch_box'+ci).style.display=''
+               
+                
+            } 
+        },
+    })
+}
+</script>
+
+
+
+{% endblock script %}

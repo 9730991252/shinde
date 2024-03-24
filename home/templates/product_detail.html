@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load discount_tag %}
+{% include 'index_navbar.html' %}  
+
+<style>
+  *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  main{
+    width: 300px;
+    height: 250px;
+    margin-top: 500px;
+    margin: auto;
+    box-shadow: 0px 0px 1px gray;
+    background-color: aqua;
+    position: relative;
+    overflow: hidden;
+
+  }
+.slide{
+    width: 100%;
+    height: 100%;
+    transition: 1s;
+    position: absolute;
+}
+.goprev{
+    height: 50px;
+    width: 30px;
+    position: absolute;
+    margin-top: 100px;
+    left: 1px;
+
+}
+
+.gonext{
+    height: 50px;
+    width: 30px;
+    position: absolute;
+    margin-top: 100px;
+    right: 1px;
+
+}
+
+.detail_box{
+margin-top: 10px;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 2px 2px 10px  black;
+
+  
+}
+.product_name{
+    margin-top: 5px;
+    padding: 10px;
+    text-align: center;
+}
+
+.btn_d{
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    gap: 15px;
+
+}
+
+@media only screen and (min-width: 200px) and (max-width: 567px){
+  
+}
+</style>
+<div class="detail_box">
+<main>
+    <img src="{{p.image.url}}" class="slide" width="200px" alt="">
+    <img src="{{p.image_1.url}}" class="slide" width="200px" alt="">
+    <img src="{{p.image_2.url}}" class="slide" width="200px" alt="">
+    <img src="{{p.image_3.url}}" class="slide" width="200px" alt="">
+    <button class="goprev" onclick="goprev()">&#10094</button>
+    <button class="gonext" onclick="gonext()">&#10095</button>
+</main>
+
+
+
+<div class="product_name"><strong>{{p.product_name}}</strong></div>
+<div class="p-2"> <h6>Rs- {% call_sellprice p.price p.discount %}&nbsp;&nbsp;<del>{{p.price}}</del> <strong class="text-success">&nbsp;{{p.discount}}% Off</strong></h6></div>
+<div class="dec">
+    <strong>{{p.discription | safe }}</strong>
+</div>
+
+<div class="btn_d">
+
+    <div ><button type="button" onclick="minus('{{p.id}}')" class="btn btn-success px-3">-</button></div>
+    <div ><strong  id="qty{{p.id}}"  >1</strong></div>
+    <div><button type="button" onclick="plus('{{p.id}}')" class="btn btn-success px-3" >+</button></div>
+    <div><button type="button" class="btn btn-danger mx-auto" onclick="add_to_cart('{{p.id}}')">Add To Cart </button></div>
+
+</div>
+<div id="numb{{p.id}}" class="text-center"></div> 
+</div>
+
+<h1>Related Products </h1>
+
+
+
+{% include 'footer.html' %}
+{% endblock content %}
+
+{% block script %}
+
+<script>
+const slides = document.querySelectorAll(".slide")
+var counter=0;
+
+slides.forEach((slide,index)=>{
+    slide.style.left = `${index * 100}%`
+})
+
+const gonext =()=>{
+    counter++;
+    if(counter == slides.length){
+        counter = 0;
+    }
+    slideimage()
+}
+const goprev =()=>{
+    counter--;
+    if(counter == -1){
+        counter = slides.length-1;
+    }
+    slideimage()
+}
+
+
+
+
+const slideimage = () =>{
+    slides.forEach((slide)=>{
+        console.log(slide)
+        slide.style.transform =`translateX(-${counter * 100}%)`
+    })
+}
+
+
+
+
+
+
+
+
+
+//pus btn
+function plus(id){
+    var qty = document.getElementById('qty'+id).innerHTML;
+    //alert(qty)
+    if(qty < 50){
+      qty++;
+    document.getElementById('qty'+id).innerHTML=qty;
+    //p=qty*price
+    //document.getElementById('set_prc'+id).innerText=p;
+    }
+      }
+
+
+  //minus btn
+function minus(id){
+    var qty = document.getElementById('qty'+id).innerHTML;
+    //alert(qty)
+    if(qty > 1){
+      qty--;
+    document.getElementById('qty'+id).innerHTML=qty;
+    //p=qty*price
+    //document.getElementById('set_prc'+id).innerText=p;
+    }
+      }
+function add_to_cart(id){
+  var qty = document.getElementById('qty'+id).innerHTML;
+  $.ajax({
+    url: "{% url 'add_to_cart' %}",
+    method: "GET",
+    data:{
+        pid:id,
+        qty:qty
+    },
+    success: function(data){
+      ng=(data.ng)
+        document.getElementById('all_qty').innerHTML=ng
+      if (data.status == 0){
+        temp=`
+        <h6>Enter Delivery Information </h6>
+        
+        
+        <input type="number" id="mon${id}" class="form-control" placeholder="Enter Mobile Number " >
+        <a  class="btn btn-warning mt-2" onclick=customer_mobile(${id})>Place Order </a>
+        `
+        document.getElementById('numb'+id).innerHTML=temp
+        
+      }cart_btn()
+    }
+  })
+}
+
+
+
+function customer_mobile(pid){
+  var mobile = document.getElementById('mon'+pid).value;
+  var qty = document.getElementById('qty'+pid).innerHTML;
+    if (mobile=='' | mobile.length > 10 | mobile.length < 10){
+    document.getElementById('mon'+pid).style.borderColor ='red';return false;
+  }
+
+
+  $.ajax({
+    url: "{% url 'customer_mobile' %}",
+    method: "GET",
+    data:{
+        pid:pid,
+        mobile:mobile,
+        qty:qty
+    },
+    success: function(data){
+    window.location.reload()
+    }
+  })
+}
+cart_btn()
+function cart_btn(){
+  ng=document.getElementById('all_qty').innerHTML
+if(ng != 0){
+  document.getElementById('cart_btn').style.display='';
+}
+
+}
+
+
+
+
+
+</script>
+{% endblock script %}
+
+
+
