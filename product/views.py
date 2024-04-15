@@ -65,7 +65,7 @@ def add_seller(request):
                 ac.save()            
         return render(request,'add_seller.html',context=context)
     else:
-        return redirect('admin_login')
+        return redirect('/login/')
 
 
 
@@ -112,7 +112,7 @@ def shop_category(request):
                 ac.save()            
         return render(request,'shop_category.html',context=context)
     else:
-        return redirect('admin_login')
+        return redirect('/login/')
 
 
 
@@ -361,7 +361,7 @@ def product(request):
             ac.save()            
         return render(request,'product.html',context=context)
     else:
-        return redirect('admin_login')
+        return redirect('/login/')
     
 
 def select_prd_cat (request):

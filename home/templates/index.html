@@ -205,7 +205,7 @@ $.ajax({
         </div>
             
       </div>
-      <div id="numb{{p.id}}" class="text-center"></div> 
+      <div id="numb${data.p[key].id}" class="text-center"></div> 
     </div>
     
         `
@@ -247,13 +247,15 @@ function add_to_cart(id){
     url: "{% url 'add_to_cart' %}",
     method: "GET",
     data:{
-        pid:id,
-        qty:qty
+      pid:id,
+      qty:qty
     },
     success: function(data){
       ng=(data.ng)
+      //console.log(data.status)
         document.getElementById('all_qty').innerHTML=ng
       if (data.status == 0){
+        //console.log(';;;')
         temp=`
         <h6>Enter Delivery Information </h6>
         

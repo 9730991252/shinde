@@ -7,7 +7,7 @@ from order.models import *
 # Create your views here.
 def add_to_cart (request):
     if request.method == "GET":
-        #print(pid)
+        #print('pid')
         data=[]
         status=36
         ng=0
@@ -17,7 +17,7 @@ def add_to_cart (request):
             pid=request.GET['pid']
             qty=request.GET['qty']
             cp=Cart.objects.filter(product_id=pid,customer_id=c.id)
-            #print(qty)
+            print(customer_mobile)
             chk=len(cp)
             if chk == 0:
                 Cart(
